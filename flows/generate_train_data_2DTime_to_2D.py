@@ -16,6 +16,7 @@ from flows.tasks.data_generation import extract_patches
 from flows.utils.parameters import DataGen2D, InputData
 
 
+@task(cache_key_fn=task_input_hash)
 def validate_parameters(
     user: User,
     run_name: str,
@@ -43,7 +44,7 @@ def validate_parameters(
     ), "datagen_2d.patch_shape must be of length 2."
 
     assert not exists(output_dir), f"Output directory {output_dir} exists " f"already."
-    os.makedirs(output_dir, exists_ok=False)
+    os.makedirs(output_dir, exist_ok=False)
 
     run_dir = join(
         base_dir, group, user.name, "prefect-runs", "n2v", run_name.replace(" ", "-")
