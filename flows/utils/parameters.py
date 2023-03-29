@@ -19,8 +19,8 @@ class TrainData(BaseModel):
 
 
 class N2VModel(BaseModel):
-    output_dir: str
-    model_name: str
+    output_dir: str = "/tungstenfs/scratch"
+    model_name: str = "n2v2-model"
     epochs: int = 200
     batch_size: int = 128
     unet_depth: int = 2
@@ -28,6 +28,6 @@ class N2VModel(BaseModel):
 
 class WandB(BaseModel):
     host: str = "https://wandb.fmi.ch"
-    secret_key: str
-    project: str
-    entity: str
+    secret_key: str = "wandb-user"
+    project: str = "denoising"
+    entity: str = "faim"
