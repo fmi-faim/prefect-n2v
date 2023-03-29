@@ -24,7 +24,6 @@ def validate_parameters(
     output_dir: str,
     datagen_2d: DataGen2D,
 ):
-    logger = get_run_logger()
     base_dir = LocalFileSystem.load("base-output-directory").basepath
     group = user.group.value
     assert exists(join(base_dir, group)), (
@@ -46,13 +45,6 @@ def validate_parameters(
     assert not exists(output_dir), f"Output directory {output_dir} exists " f"already."
     os.makedirs(output_dir, exist_ok=False)
 
-    run_dir = join(
-        base_dir, group, user.name, "prefect-runs", "n2v", run_name.replace(" ", "-")
-    )
-
-    if exists(run_dir):
-        logger.error(f"Run directory {run_dir} exists already.")
-
     parameters = {
         "user": {
             "name": user.name,
@@ -63,6 +55,12 @@ def validate_parameters(
         "output_dir": output_dir,
         "datagen_2d": datagen_2d.dict(),
     }
+
+    run_dir = join(
+        base_dir, group, user.name, "prefect-runs", "n2v", run_name.replace(" ", "-")
+    )
+
+    assert not exists(run_dir), f"Run directory {run_dir} exists already."
 
     os.makedirs(run_dir, exist_ok=False)
     with open(join(run_dir, "parameters.json"), "w") as f:
@@ -141,6 +139,7 @@ def generate_train_data_2DTime_to_2D(
         pattern=input_data.pattern,
         pixel_resolution_um=input_data.xy_pixelsize_um,
         axes=input_data.axes,
+        wait_for=[run_dir],
     )
 
     x_train, x_val = extract_patches(
