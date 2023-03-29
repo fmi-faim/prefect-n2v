@@ -104,6 +104,8 @@ def list_images(
                     )
                 )
 
+    get_run_logger().info(f"Found {len(images)} images.")
+
     return images
 
 
