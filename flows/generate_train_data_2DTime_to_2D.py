@@ -147,6 +147,7 @@ def generate_train_data_2DTime_to_2D(
         img_files=img_files,
         num_patches_per_img=datagen_2d.num_patches_per_img,
         patch_shape=datagen_2d.patch_shape,
+        axes=input_data.axes,
         output_dir=output_dir,
     )
 
