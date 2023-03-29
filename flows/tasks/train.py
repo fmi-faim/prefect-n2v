@@ -22,16 +22,6 @@ def train_model(
         key=Secret.load(wandb_options.secret_key).get(),
         host=wandb_options.host,
     )
-    wandb.init(
-        project=wandb_options.project,
-        entity=wandb_options.entity,
-        name=n2v_model.model_name,
-        tags=[user.name, user.group.value],
-    )
-
-    get_run_logger().info(
-        f"You can follow the training process at:\n" f"{wandb.run.get_url()}"
-    )
 
     X = x.get_data()
     config = N2VConfig(
@@ -51,13 +41,31 @@ def train_model(
         skip_skipone=True,
         n2v_neighborhood_radius=2,
     )
+
+    wandb.init(
+        project=wandb_options.project,
+        entity=wandb_options.entity,
+        name=n2v_model.model_name,
+        tags=[user.name, user.group.value],
+        config=config.__dict__,
+    )
+
+    get_run_logger().info(
+        f"You can follow the training process at:\n" f"{wandb.run.get_url()}"
+    )
+
     model = N2V(
         config=config,
         name=n2v_model.model_name,
         basedir=n2v_model.output_dir,
     )
     model.prepare_for_training(metrics=())
-    model.callbacks.append(WandbCallback())
+    model.callbacks.append(
+        WandbCallback(
+            save_graph=False,
+            save_model=False,
+        )
+    )
 
     model.train(X, x_val.get_data())
 
