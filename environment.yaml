@@ -1,0 +1,15 @@
+name: prefect-n2v
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python==3.9
+  - cudatoolkit=11.8.0
+  - pip
+  - pip:
+    - nvidia-cudnn-cu11==8.6.0.163
+    - tensorflow==2.12.*
+    - n2v
+    - prefect==2.8.7
+    - git+https://github.com/fmi-faim/custom-prefect-result@v0.1.7
+    - git+https://github.com/fmi-faim/faim-prefect@v0.2.2
