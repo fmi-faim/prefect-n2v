@@ -26,22 +26,24 @@ def validate_parameters(
     logger = get_run_logger()
     base_dir = LocalFileSystem.load("base-output-directory").basepath
     group = user.group.value
-    if not exists(join(base_dir, group)):
-        logger.error(f"Group '{group}' does not exist in '{base_dir}'.")
+    assert exists(join(base_dir, group)), (
+        f"Group '{group}' does not exist " f"in '{base_dir}'."
+    )
 
-    if not exists(input_data.input_dir):
-        logger.error(f"Input directory '{input_data.input_dir}' does not " f"exist.")
+    assert exists(input_data.input_dir), (
+        f"Input directory " f"'{input_data.input_dir}' does not " f"exist."
+    )
 
-    if not bool(re.match("[XY]+", input_data.axes)):
-        logger.error("Axes is only allowed to contain 'XY'.")
+    assert bool(
+        re.match("[TXYC]+", input_data.axes)
+    ), "Axes is only allowed to contain 'TYXC'."
 
-    if len(datagen_2d.patch_shape) != 2:
-        logger.error("datagen_2d.patch_shape must be of length 2.")
+    assert (
+        len(datagen_2d.patch_shape) == 2
+    ), "datagen_2d.patch_shape must be of length 2."
 
-    if exists(output_dir):
-        logger.error(f"Output directory {output_dir} exists already.")
-    else:
-        os.makedirs(output_dir, exists_ok=False)
+    assert not exists(output_dir), f"Output directory {output_dir} exists " f"already."
+    os.makedirs(output_dir, exists_ok=False)
 
     run_dir = join(
         base_dir, group, user.name, "prefect-runs", "n2v", run_name.replace(" ", "-")
