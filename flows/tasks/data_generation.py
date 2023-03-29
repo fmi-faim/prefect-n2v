@@ -1,3 +1,4 @@
+import json
 import random
 from copy import copy
 from os.path import join
@@ -8,6 +9,18 @@ from cpr.numpy.NumpyTarget import NumpyTarget
 from cpr.utilities.utilities import task_input_hash
 from n2v.internals.N2V_DataGenerator import N2V_DataGenerator
 from prefect import task
+
+
+def write_summary(path, n_patches, file_list):
+    summary = (
+        "# Summary\n"
+        f"{n_patches} patches were extracted from the following image "
+        f"files:\n"
+        f"{json.dumps(file_list, indent=4)}"
+    )
+
+    with open(path, "w") as f:
+        f.write(summary)
 
 
 @task(cache_key_fn=task_input_hash)
@@ -53,6 +66,11 @@ def extract_patches(
             augment=False,
         )
     )
+    write_summary(
+        path=join(output_dir, "x_val_2D.md"),
+        n_patches=x_val.get_data().shape[0],
+        file_list=[img.get_path() for img in img_files_shuffled[:split]],
+    )
 
     x = NumpyTarget.from_path(join(output_dir, "x_train_2D.npy"))
     x.set_data(
@@ -62,6 +80,11 @@ def extract_patches(
             shape=patch_shape,
             augment=True,
         )
+    )
+    write_summary(
+        path=join(output_dir, "x_train_2D.md"),
+        n_patches=x.get_data().shape[0],
+        file_list=[img.get_path() for img in img_files_shuffled[split:]],
     )
 
     return x, x_val
