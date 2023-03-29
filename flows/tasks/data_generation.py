@@ -6,7 +6,7 @@ from cpr.image.ImageSource import ImageSource
 from cpr.numpy.NumpyTarget import NumpyTarget
 from cpr.utilities.utilities import task_input_hash
 from n2v.internals.N2V_DataGenerator import N2V_DataGenerator
-from prefect import task
+from prefect import get_run_logger, task
 
 
 @task(cache_key_fn=task_input_hash)
@@ -21,7 +21,10 @@ def extract_patches(
     datagen = N2V_DataGenerator()
     split = int(min(max(len(img_files) * 0.1, 1), 500))
 
+    get_run_logger().info(img_files[0].get_path())
+    get_run_logger().info(img_files_shuffled[0].get_path())
     images = [img.get_data() for img in img_files_shuffled]
+    get_run_logger().info(images[0].shape)
 
     x_val = NumpyTarget.from_path(join(output_dir, "x_val_2D.npy"))
     x_val.set_data(
