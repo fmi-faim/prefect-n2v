@@ -70,7 +70,7 @@ def validate_parameters(
 
 with open(
     join("flows/generate_train_data_2DTime_to_2D.md"),
-    encoding="UTIF-8",
+    encoding="UTF-8",
 ) as f:
     description = f.read()
 
