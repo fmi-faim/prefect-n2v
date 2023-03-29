@@ -40,4 +40,3 @@ def extract_patches(
     )
 
     return x, x_val
-

@@ -1,11 +1,11 @@
 import json
 import os
 import re
-from os.path import join, exists
+from os.path import exists, join
 
-from cpr.Serializer import cpr_serializer
 from cpr.image.ImageSource import ImageSource
 from cpr.numpy.NumpyTarget import NumpyTarget
+from cpr.Serializer import cpr_serializer
 from cpr.utilities.utilities import task_input_hash
 from faim_prefect.mamba import log_infrastructure
 from faim_prefect.parameter import User
@@ -13,7 +13,7 @@ from prefect import flow, get_run_logger, task
 from prefect.filesystems import LocalFileSystem
 
 from flows.tasks.data_generation import extract_patches
-from flows.utils.parameters import InputData, DataGen2D
+from flows.utils.parameters import DataGen2D, InputData
 
 
 def validate_parameters(
@@ -44,12 +44,7 @@ def validate_parameters(
         os.makedirs(output_dir, exists_ok=False)
 
     run_dir = join(
-        base_dir,
-        group,
-        user.name,
-        "prefect-runs",
-        "n2v",
-        run_name.replace(" ", "-")
+        base_dir, group, user.name, "prefect-runs", "n2v", run_name.replace(" ", "-")
     )
 
     if exists(run_dir):
@@ -78,6 +73,7 @@ with open(
     encoding="UTIF-8",
 ) as f:
     description = f.read()
+
 
 @task(cache_key_fn=task_input_hash, refresh_cache=True)
 def list_images(
@@ -120,7 +116,7 @@ def generate_train_data_2DTime_to_2D(
     user: User,
     run_name: str,
     input_data: InputData = InputData(),
-    output_dir: str = '/tungstenfs/scratch',
+    output_dir: str = "/tungstenfs/scratch",
     datagen_2d: DataGen2D = DataGen2D(),
 ) -> tuple[NumpyTarget, NumpyTarget]:
     run_dir = validate_parameters(

@@ -15,7 +15,7 @@ The provided tiff-files must be 2D.
     * `axes`: String indicating the axes order of the tiff files.
     * `xy_pixelsize_um`: The pixel-size in micrometers.
 * `output_dir`: Path to the output directory.
-* `datagen_2d`: 
+* `datagen_2d`:
     * `patch_shape`: Size of the extracted training patches.
     * `num_patches_per_img`: Number of patches extracted from each image.
 
