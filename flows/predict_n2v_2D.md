@@ -1,27 +1,27 @@
-# N2V: Train 2D model
-Trains a 2D [N2V2](https://github.com/juglab/n2v) denoising model.
+# N2V: Predict 2D model
+Applies a 2D [N2V2](https://github.com/juglab/n2v) denoising model to a directory of images.
 
 ## Input Format
-Expects training data generated with the 'N2V: Generate Train Data from 2D+Time' flow.
+Expects a trained N2V model and a directory containing single channel images.
 
 ## Flow Parameters
 * `user`:
     * `name`: Name of the user.
     * `group`: Group name of the user.
 * `run_name`: Name of processing run.
-* `train_data`:
-    * `train_data`: Path to the `x_train_2D-...npy` file.
-    * `val_data`: Path to the `x_val_2D-...npy` file.
-* `n2v_model`:
-    * `output_dir`: Directory where the model will be saved.
+* `input_data`:
+    * `input_dir`: Input directory containing the 2D+Channel tiff files.
+    * `pattern`: A pattern to filter the tiff files.
+    * `axes`: String indicating the axes order of the tiff files.
+    * `xy_pixelsize_um`: The pixel-size in micrometers.
+* `output_dir`: Path to the output directory.
+* `n2v_trained_model`:
+    * `base_dir`: Directory in which the model is stored.
     * `model_name`: Name of the denoising model.
-    * `epochs`: Number of epochs for which the model is trained.
-    * `batch_size`: Training batch size.
-    * `unet_depth`: Number of down-sampling layers.
-    * `patch_shape`: Patch size used for training. Must be smaller than extracted training patches.
+    * `weights`: Weights which are used during prediction.
 
 ## Output Format
-Saves a trained model in `n2v_model.output_dir`.
+The denoised images are saved as tiff files in the `output_dir`.
 
 ## Citation
 If you use this flow please cite the [N2V](https://arxiv.org/abs/1811.10980) and [N2V2](https://arxiv.org/abs/2211.08512) publications:

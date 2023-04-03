@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic import BaseModel
 
 
@@ -24,6 +26,13 @@ class N2VModel(BaseModel):
     epochs: int = 200
     batch_size: int = 128
     unet_depth: int = 2
+    patch_shape: list[int] = [96, 96]
+
+
+class N2VTrainedModel(BaseModel):
+    base_dir: str = "/tungstenfs/scratch"
+    model_name: str = "n2v2-model"
+    weights: Literal["last", "best"] = "last"
 
 
 class WandB(BaseModel):

@@ -4,15 +4,18 @@ from os.path import exists, join
 
 from cpr.numpy.NumpySource import NumpySource
 from cpr.Serializer import cpr_serializer
+from cpr.utilities.utilities import task_input_hash
 from faim_prefect.mamba import log_infrastructure
 from faim_prefect.parameter import User
-from prefect import flow, get_run_logger
+from prefect import flow, get_run_logger, task
 from prefect.filesystems import LocalFileSystem
 
+from flows.storage_keys import RESULT_STORAGE_KEY
 from flows.tasks.train import train_model
 from flows.utils.parameters import N2VModel, TrainData, WandB
 
 
+@task(cache_key_fn=task_input_hash, result_storage_key=RESULT_STORAGE_KEY)
 def validate_parameters(
     user: User,
     run_name: str,

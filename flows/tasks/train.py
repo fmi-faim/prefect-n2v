@@ -1,16 +1,19 @@
+import prefect
+import wandb
 from cpr.numpy.NumpyTarget import NumpyTarget
 from cpr.utilities.utilities import task_input_hash
 from faim_prefect.parameter import User
 from n2v.models import N2V, N2VConfig
 from prefect import get_run_logger, task
+from prefect.artifacts import create_link_artifact
 from prefect.blocks.system import Secret
 from wandb.integration.keras import WandbCallback
 
-import wandb
+from flows.storage_keys import RESULT_STORAGE_KEY
 from flows.utils.parameters import N2VModel, WandB
 
 
-@task(cache_key_fn=task_input_hash)
+@task(cache_key_fn=task_input_hash, result_storage_key=RESULT_STORAGE_KEY)
 def train_model(
     user: User,
     n2v_model: N2VModel,
@@ -35,7 +38,7 @@ def train_model(
         batch_norm=True,
         train_batch_size=n2v_model.batch_size,
         n2v_perc_pix=0.198,
-        n2v_patch_shape=(64, 64),
+        n2v_patch_shape=tuple(n2v_model.patch_shape),
         n2v_manipulator="median",
         blurpool=True,
         skip_skipone=True,
@@ -50,6 +53,12 @@ def train_model(
         config=config.__dict__,
     )
 
+    create_link_artifact(
+        link=wandb.run.get_url(),
+        key=f"{prefect.runtime.flow_run.name}-wandb-dashboard",
+        link_text="Follow the training progress on Weights&Biases.",
+        description="Link to the W&B dashboard for this training run.",
+    )
     get_run_logger().info(
         f"You can follow the training process at:\n" f"{wandb.run.get_url()}"
     )
