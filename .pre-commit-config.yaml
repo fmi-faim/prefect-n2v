@@ -13,7 +13,7 @@ repos:
     rev: 6.0.0
     hooks:
       - id: flake8
-        args: ["--ignore=E501,W503,E203", ]
+        args: ["--ignore=E501,W503,E203", "--min-python-version=3.9"]
         additional_dependencies: [flake8-typing-imports==1.14.0,
         flake8-black==0.3.6]
   - repo: https://github.com/PyCQA/autoflake
