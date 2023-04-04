@@ -13,7 +13,7 @@ from n2v.models import N2V
 from prefect import flow, get_run_logger, task
 from prefect.filesystems import LocalFileSystem
 
-from flows.generate_train_data_2DTime_to_2D import list_images
+from flows.generate_train_data_2D import list_images
 from flows.storage_keys import RESULT_STORAGE_KEY
 from flows.tasks.predict import predict_2d
 from flows.utils.parameters import InputData, N2VTrainedModel
