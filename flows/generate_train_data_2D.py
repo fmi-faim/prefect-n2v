@@ -36,7 +36,7 @@ def validate_parameters(
     )
 
     def validate_axes(axes: str):
-        axes_ = axes.capitalize()
+        axes_ = axes.upper()
         assert 0 <= axes_.count("Z") <= 1, "Axes can at most contain one 'Z'."
         assert 0 <= axes_.count("C") <= 1, "Axes can at most contain one 'C'."
         assert 0 <= axes_.count("T") <= 1, "Axes can at most contain one 'T'."
