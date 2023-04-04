@@ -64,16 +64,22 @@ def extract_patches(
 
         images.append(data)
 
+    x_val_data = datagen.generate_patches_from_list(
+        images[:split],
+        num_patches_per_img=num_patches_per_img,
+        shape=patch_shape,
+        augment=False,
+    )
+    x_train_data = datagen.generate_patches_from_list(
+        images[split:],
+        num_patches_per_img=num_patches_per_img,
+        shape=patch_shape,
+        augment=True,
+    )
+
     val_output_file = join(output_dir, "x_val_2D.npy")
     x_val = NumpyTarget.from_path(val_output_file)
-    x_val.set_data(
-        datagen.generate_patches_from_list(
-            images[:split],
-            num_patches_per_img=num_patches_per_img,
-            shape=patch_shape,
-            augment=False,
-        )
-    )
+    x_val.set_data(x_val_data)
     create_table_artifact(
         key=f"{prefect.runtime.flow_run.name}-validation-images",
         table={
@@ -86,20 +92,13 @@ def extract_patches(
     )
     write_summary(
         path=join(output_dir, "x_val_2D.md"),
-        n_patches=x_val.get_data().shape[0],
+        n_patches=x_val_data.shape[0],
         file_list=[img.get_path() for img in img_files_shuffled[:split]],
     )
 
     train_output_file = join(output_dir, "x_train_2D.npy")
     x = NumpyTarget.from_path(train_output_file)
-    x.set_data(
-        datagen.generate_patches_from_list(
-            images[split:],
-            num_patches_per_img=num_patches_per_img,
-            shape=patch_shape,
-            augment=True,
-        )
-    )
+    x.set_data(x_train_data)
     create_table_artifact(
         key=f"{prefect.runtime.flow_run.name}-training-images",
         table={
@@ -112,7 +111,7 @@ def extract_patches(
     )
     write_summary(
         path=join(output_dir, "x_train_2D.md"),
-        n_patches=x.get_data().shape[0],
+        n_patches=x_train_data.shape[0],
         file_list=[img.get_path() for img in img_files_shuffled[split:]],
     )
 
