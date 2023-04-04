@@ -1,4 +1,4 @@
-# N2V: Generate Train Data from 2D+Time
+# N2V: Generate 2D Train Data
 Creates training data to train a [N2V](https://github.com/juglab/n2v) denoising network.
 
 ## Input Format

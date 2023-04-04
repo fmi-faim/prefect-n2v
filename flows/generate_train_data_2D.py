@@ -79,7 +79,7 @@ def validate_parameters(
 
 
 with open(
-    join("flows/generate_train_data_2DTime_to_2D.md"),
+    join("flows/generate_train_data_2D.md"),
     encoding="UTF-8",
 ) as f:
     description = f.read()
@@ -124,14 +124,14 @@ def list_images(
 
 
 @flow(
-    name="N2V: Generate Train Data from 2D+Time",
+    name="N2V: Generate 2D Train Data",
     description=description,
     cache_result_in_memory=False,
     persist_result=True,
     result_serializer=cpr_serializer(),
     result_storage=LocalFileSystem.load("prefect-n2v"),
 )
-def generate_train_data_2DTime_to_2D(
+def generate_train_data_2D(
     user: User,
     run_name: str,
     input_data: InputData = InputData(),
