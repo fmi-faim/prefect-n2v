@@ -27,6 +27,18 @@ def write_summary(path, n_patches, file_list):
         f.write(summary)
 
 
+def move_axes_to_TZYXC(data, axes: str):
+    source, destination = (), ()
+    i = 0
+    for c in "TZYXC":
+        if c in axes:
+            source += (axes.index(c),)
+            destination += (i,)
+            i += 1
+
+    return np.moveaxis(data, source, destination)
+
+
 @task(
     cache_key_fn=task_input_hash,
     result_storage_key=RESULT_STORAGE_KEY,
@@ -47,14 +59,17 @@ def extract_patches(
     for img in img_files_shuffled:
         data = img.get_data()
 
-        assert data.ndim <= 4, "Data can have at most 4 dimensions: TYXC"
+        assert data.ndim <= 5, "Data can have at most 5 dimensions: TZYXC"
+
+        data = move_axes_to_TZYXC(data, axes)
+
         if "C" in axes:
             assert (
                 data.shape[axes.index("C")] == 1
             ), "Only single channel images are supported."
 
-        if "T" in axes:
-            data = np.moveaxis(data, axes.index("T"), 0)
+        if "T" in axes and "Z" in axes:
+            data = np.concatenate(data, axis=0)
 
         if data.ndim == 2:
             data = data[np.newaxis, ..., np.newaxis]

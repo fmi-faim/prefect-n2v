@@ -35,9 +35,17 @@ def validate_parameters(
         f"Input directory " f"'{input_data.input_dir}' does not " f"exist."
     )
 
-    assert bool(
-        re.match("[TXYC]+", input_data.axes)
-    ), "Axes is only allowed to contain 'TYXC'."
+    def validate_axes(axes: str):
+        axes_ = axes.capitalize()
+        assert 0 <= axes_.count("Z") <= 1, "Axes can at most contain one 'Z'."
+        assert 0 <= axes_.count("C") <= 1, "Axes can at most contain one 'C'."
+        assert 0 <= axes_.count("T") <= 1, "Axes can at most contain one 'T'."
+        assert axes_.count("X") == 1, "Axes must contain exactly one 'X'."
+        assert axes_.count("Y") == 1, "Axes must contain exactly one 'Y'."
+        assert bool(re.match("^[TZYXC]+", axes_)), "Axes can only contain " "'TZYXC'."
+        return axes_
+
+    input_data.axes = validate_axes(input_data.axes)
 
     assert (
         len(datagen_2d.patch_shape) == 2
