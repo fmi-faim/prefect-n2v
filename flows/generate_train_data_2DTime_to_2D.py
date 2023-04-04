@@ -108,6 +108,9 @@ def list_images(
                 )
 
     get_run_logger().info(f"Found {len(images)} images.")
+    assert len(images) >= 2, (
+        "Require at least two images to generate train " "and validation data."
+    )
 
     return images
 
