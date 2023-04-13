@@ -116,9 +116,6 @@ def list_images(
                 )
 
     get_run_logger().info(f"Found {len(images)} images.")
-    assert len(images) >= 2, (
-        "Require at least two images to generate train " "and validation data."
-    )
 
     return images
 
@@ -156,6 +153,10 @@ def generate_train_data_2D(
         pixel_resolution_um=input_data.xy_pixelsize_um,
         axes=input_data.axes,
         wait_for=[run_dir],
+    )
+
+    assert len(img_files) >= 2, (
+        "Require at least two images to generate train " "and validation data."
     )
 
     x_train, x_val = extract_patches(
